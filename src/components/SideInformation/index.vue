@@ -1,6 +1,7 @@
 <template >
   <div class="slideinformation">
-    <el-row class="title_line">
+    <!-- <div class='allheight'> -->
+      <el-row class="title_line">
       <div class="address">杭州湖滨</div>
       <div class="title_button"><i class="el-icon-arrow-left"></i></div>
     </el-row>
@@ -8,28 +9,38 @@
       <el-col :span="24"><div class="rtime_num">实时总人数</div><div class="datadate">{{date}} {{time}}</div></el-col>
       <el-col :span="24" class="rtime_data"><div class="data-num">{{rtime_num}}</div><div class="growth">同期增长<span>{{growth}}</span></div></el-col>
     </el-row>
-    <el-row class="trend">
-      <div id="chartLine" style="width:340px; height:267px;"></div>
-    </el-row>
+    <Trend :lists="lists"></Trend>
     
-    <h1>vuex 测试</h1>
+    <Numberlist></Numberlist>
+    
   </div>
 </template>
 
 <script>
 
 import echarts from 'echarts'
+import Trend from '../Trend/index'
+import Numberlist from '../Numberlist/index'
 export default {
   name: 'SideInformation',
   props: {
     
   },
+  components: {
+          Trend,
+          Numberlist
+    	},
   data(){
     return {
         time: '',
         date: '',
         rtime_num:'34,324',
-        growth:"11.5%"
+        growth:"11.5%",
+        lists:{
+          id:'chartLine',
+          arr:[120, 132, 101, 134, 90, 230, 210]
+        }
+
     }
         
   },
@@ -39,7 +50,7 @@ export default {
   mounted() {
     //this.setSort()
     //setInterval(this.updateTime(), 1000)
-    this.drawLineChart()
+    
     
   },
   created () {
@@ -49,22 +60,7 @@ export default {
         }, 1000)
     },
   methods: {
-    setSort() {
-      const el = this.$refs.dragSelect.$el.querySelectorAll('.el-select__tags > span')[0]
-      this.sortable = Sortable.create(el, {
-        ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
-        setData: function(dataTransfer) {
-          dataTransfer.setData('Text', '')
-          // to avoid Firefox bug
-          // Detail see : https://github.com/RubaXa/Sortable/issues/1012
-        },
-        onEnd: evt => {
-          const targetRow = this.value.splice(evt.oldIndex, 1)[0]
-          this.value.splice(evt.newIndex, 0, targetRow)
-        }
-      })
-    },
-
+    
   //实时时间
   updateTime() {
     var cd = new Date();
@@ -83,80 +79,10 @@ export default {
   //销毁时间更新
   beforeDestroy () {
     clearInterval(this.intervalId)
-  },
-  //echart图
-  drawLineChart() {
-    console.log('123');
-                this.chartLine = echarts.init(document.getElementById('chartLine'));
-                this.chartLine.setOption({
-                    option:{
-                      backgroundColor:'#2E3037'
-                    },
-                    title: {
-                        text: '总人数趋势',
-                        textStyle:{
-                          fontSize: 13,
-                          fontWeight: 'bolder',
-                          color: '#fff'
-                        }
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: ['昨天', '今天'],
-                        textStyle:{
-                          color:'#fff'
-                        }
-                    },
-                    grid: {
-                        
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['12：00', '13:00', '14:00', '15:00', '周五', '周六', '周日'],
-                        axisLine:{
-                         // axisLine坐标轴轴线样式设置
-                        lineStyle:{
-                            color:'#fff', // 坐标轴轴线颜色设置
-                            width:1, // 坐标轴线线宽。
-                        }
-                    },
-                    },
-                    yAxis: {
-                        type: 'value',
-                         axisLine: {
-                          show: false
-                        },
-                    },
-                    series: [
-                        {
-                            name: '昨天',
-                            type: 'line',
-                            stack: '总量',
-                            data: [120, 132, 101, 134, 90, 230, 210]
-                        },
-                        {
-                            name: '今天',
-                            type: 'line',
-                            stack: '总量',
-                            data: [220, 182, 191, 234, 290, 330, 310]
-                        }
-                    ]
-                });
-            }
-
-
-
-
-  },
+  }
   
   
+}
 }
 </script>
 
@@ -167,6 +93,21 @@ export default {
   background: #202126;
   padding:23px 16px 35px;
   box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+
+.allheight{
+  height: 100%;
+  //overflow: hidden;
+  display: flex;
+  flex-direction:column;
+}
+.test{
+  flex: 1;
+  //background: #fff;
+  //margin-top: 10px;
 }
 .title_line{
   height: 33px;
@@ -202,6 +143,7 @@ export default {
   height: 99px;
   background: #2E3037;
   margin: 0 auto;
+  margin-bottom: 16px;
   box-sizing: border-box;
   padding: 16px 0 11px 16px;
   font-size: 13px;
@@ -244,9 +186,5 @@ export default {
 
     }
 }
-.chartLine{
-  width: 340px;
-  height: 267px;
 }
-
 </style>
